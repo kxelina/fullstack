@@ -27,7 +27,7 @@ sequenceDiagram
 
     browser->>server: if ok, then GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
-    server->>browser: send the updated json file from database
+    server-->>browser: send the updated json file from database
     deactivate server
     browser->>browser: create page with new data
 ```
