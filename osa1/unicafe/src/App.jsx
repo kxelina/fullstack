@@ -16,9 +16,18 @@ const Button = (props) => (
 )
 
 const Statistics = (props) => {
-  const { good, neutral, bad } = props
+  const { good, neutral, bad } = props  
 
-  const all = good + neutral + bad
+  const all = good + neutral + bad  
+  
+  if (all == 0) {
+    return(
+    <div>
+      <h1>statistics</h1>
+      <p>No feeback given</p>
+    </div>
+    )
+  }
 
   const average = all > 0 ? (good - bad) / all : 0
 
