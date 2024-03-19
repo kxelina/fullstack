@@ -1,21 +1,24 @@
 const App = () => {
-  const course = 'Half Stack application development'
-  const parts = [
+  const course = {
+    name: 'Half Stack application development',
+    parts: [
     {name: 'Fundamentals of React', exercises: 10},
     {name: 'Using props to pass data', exercises: 7},
     {name: 'State of a component', exercises: 14}
   ]
+}
 
   const Header = () => {
     console.log(course)
     return (
       <div>
-        <h1>{course}</h1>
+        <h1>{course.name}</h1>
       </div>
     )
   }
 
   const Content = () => {
+    const parts = course.parts
     console.log(parts)
     return (
       <div>
@@ -27,7 +30,7 @@ const App = () => {
   }
 
   const Total = () => {
-    const total = parts[0].exercises + parts[1].exercises + parts[2].exercises
+    const total = course.parts[0].exercises + course.parts[1].exercises + course.parts[2].exercises
     console.log(total)
     return (
       <div>
@@ -39,8 +42,8 @@ const App = () => {
   return (
     <div>
       <Header course={course} />
-      <Content parts={parts} />
-      <Total parts={parts} />
+      <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   )
 }
