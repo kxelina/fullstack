@@ -1,5 +1,44 @@
 import { useState } from 'react'
 
+
+  const Person = (props) => {
+    console.log(props.person)
+  return (
+    <p>{props.person.name} {props.person.number}</p>
+    )
+  }
+
+  const Filter = (props) => {
+    return (
+      <div>
+        filter shown with <input value={props.search} onChange={props.handleSearch} /> 
+      </div>
+    )
+  }
+
+  const PersonForm = (props) => {
+    return (
+      <form onSubmit={props.addNewPerson}>
+        <div>name: <input value={props.newName} onChange={props.handleName}/> </div>
+        <div>number: <input value={props.newNumber} onChange={props.handleNumber}/></div>
+        <div><button type="submit">add</button></div>
+      </form>
+    )
+  }
+
+  const Persons = (props) => {
+    const {personsToShow} = props
+    return (
+      <div>
+      {personsToShow.map((person) => 
+        <div key={person.name}>
+          <Person person={person}/>
+        </div>
+      )} 
+      </div>
+    )
+  }
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number:'040-1231244'},
@@ -42,32 +81,17 @@ const App = () => {
   const personsToShow = search
   ? persons.filter(person => person.name.includes(search)) 
   : persons
-  
-  const Component = ({ person }) => {
-    console.log(person)
-  return (
-    <p>{person.name} {person.number}</p>
-    )
-  }
+
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input value={search} onChange={handleSearch} /> 
-      </div>
-      <h2>add a new</h2>
-      <form onSubmit={addNewPerson}>
-        <div>name: <input value={newName} onChange={handleName}/> </div>
-        <div>number: <input value={newNumber} onChange={handleNumber}/></div>
-        <div><button type="submit">add</button></div>
-      </form>
-      <h2>Numbers</h2>
-        {personsToShow.map((person) => 
-          <div key={person.name}>
-            <Component person={person}/>
-          </div>
-        )}
+      < Filter search={search} handleSearch={handleSearch}/> 
+      <h3>add a new</h3>
+      < PersonForm addNewPerson={addNewPerson} newName={newName} 
+      handleName={handleName} newNumber={newNumber} handleNumber={handleNumber}/> 
+      <h3>Numbers</h3>
+        < Persons personsToShow={personsToShow}/>
     </div>
   )
 
