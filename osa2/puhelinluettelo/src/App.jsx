@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-
   const Person = (props) => {
     console.log(props.person)
   return (
@@ -28,12 +27,13 @@ import personService from './services/persons'
   }
 
   const Persons = (props) => {
-    const {personsToShow} = props
+    const {personsToShow, handleDelete} = props
     return (
       <div>
       {personsToShow.map((person) => 
         <div key={person.id}>
           <Person person={person}/>
+          <button onClick={() => handleDelete(person.id)}>delete</button>
         </div>
       )} 
       </div>
@@ -62,12 +62,27 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
+      id: (persons.length + 1).toString()
     }
 
-    if (persons.some((person => person.name === newName)))
-    {window.alert(`${newName} is already added to phonebook`)}
-    else {
+    const duplicate = persons.find(person => person.name === newName)
+    if (duplicate) {
+     if (window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`))
+      
+      {const updatedPerson = { ...duplicate, number: newNumber }
+      personService
+      .update(updatedPerson.id, updatedPerson)
+      .then(() => {updatedPerson
+        console.log(updatedPerson)
+        setPersons(persons.map(person => person.id === updatedPerson.id? updatedPerson: person))
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch(error => {
+        console.error(error)
+      })}
+    } else {
     personService
     .create(personObject)
     .then(returnedPersons => {
@@ -94,10 +109,25 @@ const App = () => {
     setSearch(event.target.value)
   }
 
+  const handleDelete = (id) => {
+    const personToDelete = persons.find(person => person.id === id)
+  
+    const confirmDelete = window.confirm(`Delete ${personToDelete.name}?`)
+    if (confirmDelete) {
+      personService
+        .deleteperson(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    }
+  }
+
   const personsToShow = search
   ? persons.filter(person => person.name.includes(search)) 
   : persons
-
 
   return (
     <div>
@@ -107,7 +137,7 @@ const App = () => {
       < PersonForm addNewPerson={addNewPerson} newName={newName} 
       handleName={handleName} newNumber={newNumber} handleNumber={handleNumber}/> 
       <h3>Numbers</h3>
-        < Persons personsToShow={personsToShow}/>
+        < Persons personsToShow={personsToShow} handleDelete={handleDelete}/>
     </div>
   )
 
