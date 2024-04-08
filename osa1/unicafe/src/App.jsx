@@ -21,8 +21,8 @@ const StatisticLine = ({ text, value }) => {
       <td>{text}</td>
       <td>{value}</td>
     </tr>
-  );
-};
+  )
+}
 
 const Statistics = (props) => {
   const { good, neutral, bad } = props  

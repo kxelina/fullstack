@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
+import './index.css'
 
   const Person = (props) => {
     console.log(props.person)
@@ -45,6 +46,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     console.log('effect')
@@ -55,6 +57,26 @@ const App = () => {
     })
     },[])
 
+  const Notification = ({ message }) => {
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+
+      return () => clearTimeout(timeout)
+    }, [message])
+
+    if (message === null) {
+      return null
+    }
+  
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
+  }
+
   const addNewPerson = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target)
@@ -62,7 +84,7 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: (persons.length + 1).toString()
+      id: "id" + Math.random().toString(16).slice(2)
     }
 
     const duplicate = persons.find(person => person.name === newName)
@@ -78,6 +100,7 @@ const App = () => {
         setPersons(persons.map(person => person.id === updatedPerson.id? updatedPerson: person))
         setNewName('')
         setNewNumber('')
+        setErrorMessage(`Updated ${newName}'s number with ${newNumber}`)
       })
       .catch(error => {
         console.error(error)
@@ -85,11 +108,12 @@ const App = () => {
     } else {
     personService
     .create(personObject)
-    .then(returnedPersons => {
-      console.log(returnedPersons)
-      setPersons(persons.concat(returnedPersons))
+    .then(() => {personObject 
+      console.log(personObject)
+      setPersons(persons.concat(personObject))
       setNewName('')
       setNewNumber('')
+      setErrorMessage(`Added ${newName}`)
     })
     }
   }
@@ -118,6 +142,7 @@ const App = () => {
         .deleteperson(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
+          setErrorMessage(`Deleted ${personToDelete.name}`)
         })
         .catch(error => {
           console.error(error)
@@ -132,6 +157,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       < Filter search={search} handleSearch={handleSearch}/> 
       <h3>add a new</h3>
       < PersonForm addNewPerson={addNewPerson} newName={newName} 
