@@ -46,7 +46,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     console.log('effect')
@@ -57,23 +57,35 @@ const App = () => {
     })
     },[])
 
-  const Notification = ({ message }) => {
+  const setMessage = (message, type) => {
+      setErrorMessage({ message, type })
+    }
+
+  const Notification = ({ message, type }) => {
+    if (!message) {
+      return 
+    }
     useEffect(() => {
       const timeout = setTimeout(() => {
-        setErrorMessage(null)
+        setErrorMessage('')
       }, 5000)
 
       return () => clearTimeout(timeout)
     }, [message])
 
-    if (message === null) {
-      return null
+    
+    let className = ''
+    if (type === 'error') {
+      className = 'error'
     }
-  
-    return (
-      <div className="error">
-        {message}
-      </div>
+    if (type === 'success') {
+      className = 'success'
+    }
+
+  return (
+    <div className={className}>
+      {message}
+    </div>
     )
   }
 
@@ -100,10 +112,11 @@ const App = () => {
         setPersons(persons.map(person => person.id === updatedPerson.id? updatedPerson: person))
         setNewName('')
         setNewNumber('')
-        setErrorMessage(`Updated ${newName}'s number with ${newNumber}`)
+        setMessage(`Updated ${newName}'s number with ${newNumber}`, 'success')
       })
       .catch(error => {
         console.error(error)
+        setMessage(`Information of ${newName} has already been removed from server`, 'error')
       })}
     } else {
     personService
@@ -113,7 +126,7 @@ const App = () => {
       setPersons(persons.concat(personObject))
       setNewName('')
       setNewNumber('')
-      setErrorMessage(`Added ${newName}`)
+      setMessage(`Added ${newName}`, 'success')
     })
     }
   }
@@ -142,7 +155,7 @@ const App = () => {
         .deleteperson(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id))
-          setErrorMessage(`Deleted ${personToDelete.name}`)
+          setMessage(`Deleted ${personToDelete.name}`, 'success')
         })
         .catch(error => {
           console.error(error)
@@ -157,7 +170,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} />
+      <Notification message={errorMessage.message} type={errorMessage.type} />
       < Filter search={search} handleSearch={handleSearch}/> 
       <h3>add a new</h3>
       < PersonForm addNewPerson={addNewPerson} newName={newName} 
