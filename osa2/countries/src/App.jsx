@@ -10,10 +10,12 @@ const Find = (props) => {
 }
 
 const Filter = (props) => {
-  const {countriesToShow, search} = props
+  const {countriesToShow, search, handleShow} = props
+  console.log(countriesToShow)
   if (!search) {
     return
   }
+
   if (countriesToShow.length > 10) {
   return (
     <div>
@@ -25,10 +27,13 @@ const Filter = (props) => {
   return (
   <div>
   {countriesToShow.map(country => (
-    <p key={country.name.common}>{country.name.common}</p>
+    <div key={country.name.common}>
+      <p>{country.name.common}</p>
+    <button onClick={() => handleShow(country.name.common)}>show</button>
+    </div>
     )) }
   </div>
-  )
+    )
   }
 
   if (countriesToShow.length == 1) {
@@ -50,13 +55,14 @@ const Filter = (props) => {
       <img src={country.flags['png']}/>
     </div>
     )
-    }
+  }
 }
-
 
 function App() {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
+  const [showcountry, setShowCountry] = useState('')
+  const api_key = import.meta.env.VITE_SOME_KEY
 
 
   useEffect(() => {
@@ -77,12 +83,18 @@ function App() {
   console.log('countries', countries)
 
   const handleSearch = (event) => {
-      console.log(event.target.value)
-      setSearch(event.target.value.toLowerCase())
-    }
+    console.log(event.target.value)
+    setSearch(event.target.value.toLowerCase())
+    setShowCountry('')
+  }
 
-  const countriesToShow = search
-  ? countries.filter(country =>
+  const handleShow = (countryName) => {
+    const foundCountry = countries.find(country => country.name.common === countryName)
+    setShowCountry(foundCountry)
+  }  
+
+  const countriesToShow = showcountry ? [showcountry]
+  : search ? countries.filter(country =>
     country.name.common.toLowerCase().includes(search))
   : countries
   
@@ -91,7 +103,8 @@ function App() {
     <div>
       <h2>Find countries</h2>
       <Find search={search} handleSearch={handleSearch}/> 
-      <Filter countriesToShow={countriesToShow} search={search}/>
+      <Filter countriesToShow={countriesToShow} search={search} 
+      handleShow={handleShow}/>
     </div>
   )
 }
