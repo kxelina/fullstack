@@ -12,7 +12,6 @@ const Find = (props) => {
 
 const Filter = (props) => {
   const {countriesToShow, search, handleShow, weathers} = props
-  console.log('filter', countriesToShow)
   if (!search) {
     return
   }
@@ -41,16 +40,11 @@ const Filter = (props) => {
   var wind ='-'
     
   if (countriesToShow.length == 1) {
-    
-    console.log(temperature)  
-    console.log('countriesshow', countriesToShow[0])
     const country = countriesToShow[0]
     const languages = Object.entries(country.languages)
-    console.log(languages)
-    console.log(Array.isArray(weathers))
+    const capitals = Object.entries(country.capital)
     
     if (!Array.isArray(weathers) && weathers.length != 0) {
-    console.log('weathershow', weathers)
     temperature = (weathers.main.feels_like-272.15).toFixed(2)
     icon = `https://openweathermap.org/img/wn/${weathers.weather[0].icon}@2x.png`
     wind = weathers.wind.speed
@@ -58,7 +52,12 @@ const Filter = (props) => {
     return (
     <div>
       <h1>{country.name.common}</h1>
-      <p>capital {country.capital}</p>
+      <h3>capital: </h3>
+      <ul>
+      {capitals.map((capital, i) => (
+    <li key={i}>{capital[1]}</li>
+    )) }
+      </ul>
       <p>area {country.area}</p>
       <h3>languages:</h3>
       <ul>
@@ -85,9 +84,6 @@ function App() {
 
 
   useEffect(() => {
-    console.log('effect run, countries', countries)
-    console.log('showc',showcountry)
-    
     axios
       .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
       .then(response => {
@@ -97,20 +93,9 @@ function App() {
         console.error(error)
       })
     }, [])
-    
-
-  console.log('countries', countries)
-  console.log('weathers', weathers)
-  console.log('showcountry capital1',showcountry?.capital[0]??"puuttuu")
-  console.log('showcountry',showcountry)
-  
-  
-
 
   useEffect(() => {
-    console.log('showcountry capital2',showcountry)
     if (showcountry) {
-    console.log('showcountry capital3',showcountry?.capital[0])
     getweather(showcountry.capital)
     }
   }, [showcountry??"null"])
@@ -132,7 +117,6 @@ function App() {
   const handleShow = (countryName) => {
     const foundCountry = countries.find(country => country.name.common === countryName)
     setShowCountry(foundCountry)
-    console.log('contry found', foundCountry)
   }  
 
 
@@ -147,8 +131,7 @@ function App() {
     country.name.common.toLowerCase().includes(search))
     if (filtered_country.length == 1) {
       const f_country = filtered_country[0]
-      setShowCountry(f_country)
-      console.log('hello', f_country)}
+      setShowCountry(f_country)}
     return filtered_country
     }
   else {return countries}}
