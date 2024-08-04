@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxvIiwiaWQiOiI2NmFmNGQ4MjIxY2ZkMmFhZDhiMjMyOTAiLCJpYXQiOjE3MjI3NjU3MzMsImV4cCI6MTcyMjc2OTMzM30.p4LF3uNLZNYdbtGf9j8aEpjv00-S94QduqcopTG3pIU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxvIiwiaWQiOiI2NmFmNGQ4MjIxY2ZkMmFhZDhiMjMyOTAiLCJpYXQiOjE3MjI3Nzk3OTMsImV4cCI6MTcyMjc4MzM5M30.mPOeTwYBPWoZze_xxkwZQ6QjBJuVQXJ0XmnV_ZDqlrI
 
 {
-    "title": "moimoi",
-    "author": "moikka",
-    "url": "http://moimoi",
+    "title": "test1",
+    "author": "moi1",
+    "url": "http://test1",
     "likes": 1
 }

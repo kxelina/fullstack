@@ -87,20 +87,22 @@ const usersInDb = async () => {
 
 const createUser = async () => {
   const passwordHash = await bcrypt.hash('sekret', 10)
-  const user = new User({ username: 'testuser', name: 'Test User', passwordHash })
+  const user = new User({ username: 'test', name: 'Test', passwordHash })
 
   await user.save()
 
-  const userForToken = {
+  const userToken = {
     username: user.username,
     id: user._id,
   }
 
-  return jwt.sign(userForToken, process.env.SECRET)
+  return jwt.sign(userToken, process.env.SECRET)
 }
   
 module.exports = {
-initialBlogs, newBlog, noPw, noLikes, noTitle, 
-noUrl, blogsInDb, updatedBlog, initialUsers, shortPw, noUsername, usersInDb,
-newUser, createUser
+initialBlogs, newBlog, 
+noPw, noLikes, noTitle, 
+noUrl, blogsInDb, updatedBlog, 
+initialUsers, shortPw, noUsername, 
+usersInDb, newUser, createUser
 }

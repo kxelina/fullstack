@@ -9,10 +9,15 @@ const app = require('../app')
 
 const api = supertest(app)
 
+let token 
+
 beforeEach(async () => {
     await Blog.deleteMany({})
     await User.deleteMany({})
-    await Blog.insertMany(helper.initialBlogs)
+    token = await helper.createUser()
+    const user = await User.findOne({ username: 'test' })
+    const blogs = helper.initialBlogs.map(blog => ({ ...blog, user: user._id }))
+    await Blog.insertMany(blogs)
 })
 
 test.only('blogs are returned as json', async () => {
@@ -39,7 +44,6 @@ test.only('all blogs should have id', async () => {
 })
 
 test.only('a valid blog can be added', async () => {
-    const token = await helper.createUser()
     const newBlog = helper.newBlog
 
     await api
@@ -57,7 +61,6 @@ test.only('a valid blog can be added', async () => {
 })
 
 test.only('if no given likes, then its 0', async () => {
-    const token = await helper.createUser()
     const newBlog = helper.noLikes
 
     const response = await api
@@ -75,6 +78,7 @@ test.only('if no given title or url, then it give bad request 400', async () => 
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 
@@ -82,6 +86,7 @@ test.only('if no given title or url, then it give bad request 400', async () => 
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog2)
         .expect(400)
 })
@@ -93,6 +98,7 @@ test.only('if deleted then returns 204', async () => {
 
     await api
     .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `Bearer ${token}`)
     .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -118,7 +124,20 @@ test.only('blogs are updated', async () => {
     assert.strictEqual(response.body.author, updatedBlog.author)
     assert.strictEqual(response.body.url, updatedBlog.url)
     assert.strictEqual(response.body.likes, updatedBlog.likes)
-  })
+})
+
+test.only('if no token with blog then returns 401', async () => {
+    const newBlog = helper.newBlog
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+})
+
   
 
 after(async () => {
