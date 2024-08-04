@@ -1,5 +1,6 @@
 const { test, after, beforeEach } = require('node:test')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
@@ -10,6 +11,7 @@ const api = supertest(app)
 
 beforeEach(async () => {
     await Blog.deleteMany({})
+    await User.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
 })
 
@@ -37,15 +39,12 @@ test.only('all blogs should have id', async () => {
 })
 
 test.only('a valid blog can be added', async () => {
-    const newBlog = {
-        title: 'moimoi',
-        author: 'moikka',
-        url: 'http://moimoi',
-        likes: 1
-    }
+    const token = await helper.createUser()
+    const newBlog = helper.newBlog
 
     await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -54,14 +53,16 @@ test.only('a valid blog can be added', async () => {
     assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
 
     const titles = response.body.map(r => r.title)
-    assert(titles.includes('moimoi'))
+    assert(titles.includes(newBlog.title))
 })
 
 test.only('if no given likes, then its 0', async () => {
+    const token = await helper.createUser()
     const newBlog = helper.noLikes
 
     const response = await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
