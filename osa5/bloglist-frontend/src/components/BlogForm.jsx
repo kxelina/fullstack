@@ -24,15 +24,15 @@ const BlogForm = ({ createBlog, setBlogFormVisible }) => {
       <form onSubmit={addBlog}>
         <div>
             title
-          <input type="text" value={newBlogTitle} onChange={({ target }) => setNewBlogTitle(target.value)}/>
+          <input type="text" value={newBlogTitle} onChange={({ target }) => setNewBlogTitle(target.value)} placeholder='write blog title here'/>
         </div>
         <div>
             author
-          <input type="text" value={newBlogAuthor} onChange={({ target }) => setNewBlogAuthor(target.value)}/>
+          <input type="text" value={newBlogAuthor} onChange={({ target }) => setNewBlogAuthor(target.value)} placeholder='write blog author here'/>
         </div>
         <div>
             url
-          <input type="text" value={newBlogUrl} onChange={({ target }) => setNewBlogUrl(target.value)}/>
+          <input type="text" value={newBlogUrl} onChange={({ target }) => setNewBlogUrl(target.value)} placeholder='write blog url here'/>
         </div>
         <button type="submit">create</button>
         <button type="button" onClick={() => setBlogFormVisible(false)}>cancel</button>
