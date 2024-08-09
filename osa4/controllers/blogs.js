@@ -47,7 +47,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 
   if (blog.user.toString() !== user._id.toString()) {
-    return response.status(403).json({ error: 'forbidden' }) 
+    return response.status(403).json({ error: 'you can only delete ur own blog' }) 
   }
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
