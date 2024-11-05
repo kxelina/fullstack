@@ -3,11 +3,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { getBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 import { loginUser, logoutUser, initializeUser } from './reducers/userReducer'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import './index.css'
 import Blog from './components/Blog'
+import Blogs from './components/Blogs'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Users from './components/Users'
 
 
 const App = () => {
@@ -24,6 +27,8 @@ const App = () => {
   }, [dispatch])
 
   useEffect(() => { dispatch(initializeUser()) }, [dispatch])
+
+  console.log('user here', user)
 
 
   const handleLogin = async (event) => {
@@ -80,30 +85,40 @@ const App = () => {
   const sortedbylikesblogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification />
-      {!user && (
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin} />
-      )}
-      {user && (
-        <div>
-          <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-          {!blogFormVisible && (
-            <button onClick={() => setBlogFormVisible(true)}>create new blog</button>
-          )}
-          {blogFormVisible && <BlogForm createBlog={handlecreateBlog} setBlogFormVisible={setBlogFormVisible} />}
-          {sortedbylikesblogs.map(blog =>
-            <Blog key={blog.id} blog={blog} handleLike={() => handleLike(blog)} handleDelete={() => handleDelete(blog.id)}/>
-          )}
-        </div>
-      )}
-    </div>
+    <Router>
+      <div>
+        <h2>blogs</h2>
+        <Notification />
+        {!user.user && (
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin} />
+        )}
+        {user.user && (
+          <div>
+            <p>{user.user.name} logged in <button onClick={handleLogout}>logout</button></p>
+            <Routes>
+              <Route path="/users" element={ <Users />} />
+              <Route path="/users/:id" element={ <Blogs />} />
+              <Route path= "/"  element = {
+                <>
+                  {!blogFormVisible && (
+                    <button onClick={() => setBlogFormVisible(true)}>create new blog</button>
+                  )}
+                  {blogFormVisible && <BlogForm createBlog={handlecreateBlog} setBlogFormVisible={setBlogFormVisible} />}
+                  {sortedbylikesblogs.map(blog =>
+                    <Blog key={blog.id} blog={blog} handleLike={() => handleLike(blog)} handleDelete={() => handleDelete(blog.id)}/>
+                  )}
+                </>
+              }/>
+            </Routes>
+          </div>
+        )}
+      </div>
+    </Router>
   )
 }
 

@@ -1,21 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit'
 import loginService from '../services/login'
 import blogService from '../services/blogs'
+import userService from '../services/users'
+
+
+const initialState = {
+  user: null,
+  users: [],
+  userBlog: []
+}
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: null,
+  initialState: initialState,
   reducers: {
     set_User(state, action) {
-      return action.payload
+      state.user = action.payload
     },
-    clear_User() {
-      return null
+    clear_User(state) {
+      state.user = null
+    },
+    set_Users(state, action) {
+      state.users = action.payload
     }
-  }
-})
+  } })
 
-export const { set_User, clear_User } = userSlice.actions
+export const { set_User, clear_User, set_Users } = userSlice.actions
 
 export const loginUser = (credentials) => {
   return async dispatch => {
@@ -42,6 +52,21 @@ export const initializeUser = () => {
       blogService.setToken(user.token)
       dispatch(set_User(user))
     }
+  }
+}
+
+
+export const getUserdata = (id) => {
+  return async dispatch => {
+    const user = await userService.getUser(id)
+    dispatch(set_User(user))
+  }
+}
+
+export const getAllUsers = () => {
+  return async dispatch => {
+    const users = await userService.getAllUsers()
+    dispatch(set_Users(users))
   }
 }
 
