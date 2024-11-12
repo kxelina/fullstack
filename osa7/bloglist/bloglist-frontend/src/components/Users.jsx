@@ -12,7 +12,7 @@ const Users = () => {
     dispatch(getAllUsers())
   }, [dispatch])
 
-  console.log(users, users[0]?.id)
+  console.log(users)
 
   return (
     <div>

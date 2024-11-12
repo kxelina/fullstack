@@ -6,14 +6,14 @@ import userService from '../services/users'
 
 const initialState = {
   user: null,
-  users: [],
-  userBlog: []
+  users: []
 }
 
 const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
+
     set_User(state, action) {
       state.user = action.payload
     },
@@ -25,7 +25,7 @@ const userSlice = createSlice({
     }
   } })
 
-export const { set_User, clear_User, set_Users } = userSlice.actions
+export const { set_User, set_Users, clear_User } = userSlice.actions
 
 export const loginUser = (credentials) => {
   return async dispatch => {

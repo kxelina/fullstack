@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getUserdata } from '../reducers/userReducer'
 import { useParams } from 'react-router-dom'
 
+
 const Blogs = () => {
   const dispatch = useDispatch()
-  const user = useSelector(state => state.user.user)
   const userID = useParams().id
+  const user = useSelector(state =>
+    state.user.users.find(user => user.id === userID)
+  )
 
   useEffect(() => {
     dispatch(getUserdata(userID))

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect , useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotification } from './reducers/notificationReducer'
 import { getBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
@@ -11,11 +11,14 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Users from './components/Users'
+import BlogDetails from './components/BlogDetails'
+import Navbar from './components/NavBar'
 
 
 const App = () => {
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
+  const loggeduser = useRef(null)
   const [blogFormVisible, setBlogFormVisible] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -28,7 +31,15 @@ const App = () => {
 
   useEffect(() => { dispatch(initializeUser()) }, [dispatch])
 
-  console.log('user here', user)
+  useEffect(() => {
+    if (user && !loggeduser.current) {
+      loggeduser.current = user.user
+    }
+    if (!user) {
+      loggeduser.current = null
+    }
+  }, [user])
+
 
 
   const handleLogin = async (event) => {
@@ -87,7 +98,6 @@ const App = () => {
   return (
     <Router>
       <div>
-        <h2>blogs</h2>
         <Notification />
         {!user.user && (
           <LoginForm
@@ -99,10 +109,12 @@ const App = () => {
         )}
         {user.user && (
           <div>
-            <p>{user.user.name} logged in <button onClick={handleLogout}>logout</button></p>
+            <Navbar user={loggeduser.current} handleLogout={handleLogout}/>
+            <h2>blog app</h2>
             <Routes>
               <Route path="/users" element={ <Users />} />
               <Route path="/users/:id" element={ <Blogs />} />
+              <Route path="/blogs/:id" element={ <BlogDetails blogs = {blogs} handleLike={handleLike}/>} />
               <Route path= "/"  element = {
                 <>
                   {!blogFormVisible && (
